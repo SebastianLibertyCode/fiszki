@@ -1,0 +1,14 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { DeckDetailsWrapper } from "@/components/DeckDetailsWrapper";
+
+const { deckId } = Astro.params;
+
+if (!deckId) {
+  return Astro.redirect("/decks");
+}
+---
+
+<Layout title="Deck Details">
+  <DeckDetailsWrapper client:load deckId={deckId} />
+</Layout>
