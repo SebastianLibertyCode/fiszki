@@ -1,8 +1,5 @@
 import { z } from "zod";
-import type { CardCreateCommand, CardUpdateCommand, CardStatusUpdateCommand } from "../../types";
-import type { Database } from "../../db/database.types";
 
-type CardStatus = Database["public"]["Enums"]["card_status"];
 const cardStatusValues = ["pending", "accepted", "rejected"] as const;
 
 // Base schema for card content validation
@@ -19,7 +16,7 @@ export const updateCardSchema = z.object(cardContentSchema);
 
 // Schema for updating card status
 export const updateCardStatusSchema = z.object({
-  status: z.enum(cardStatusValues),
+  status: z.enum(["new", "in_progress", "accepted", "rejected"]),
 });
 
 // Schema for query parameters

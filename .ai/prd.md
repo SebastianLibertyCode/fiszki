@@ -30,11 +30,15 @@ Tworzenie wysokiej jakości fiszek edukacyjnych metodą ręczną jest czasochło
    - możliwość zmiany statusu po początkowej decyzji
    - usunięcie odrzuconych kart po zakończeniu procesu przeglądu
    - rejestrowanie timestampów started_at i finished_at w celu wyliczenia time_spent (bez wyświetlania w UI)
-6. Monitorowanie i ograniczenia
+6. Nauka z fiszkami
+   - wyświetlanie kazdej fiszki, które ma dwie strony (pytanie i odpowiedz)
+   - fiszka obraca się po kliknieciu w nia
+   - fiszka pokazuje się z widokiem pytania
+7. Monitorowanie i ograniczenia
    - śledzenie zużycia tokenów OpenAI na poziomie aplikacji i użytkownika
    - blokowanie dalszych żądań AI po przekroczeniu darmowego limitu tokenów
    - mierzenie SLA generacji (P95 < 20 s)
-7. Obsługa błędów
+8. Obsługa błędów
    - przyjazne komunikaty w UI
    - retry/backoff z kolejką zadań
    - tryb degradacji (możliwość ręcznego dodania karty przy awarii AI)
@@ -180,6 +184,15 @@ Opis: Jako produkt chcę rejestrować czas od rozpoczęcia generacji do akceptac
 Kryteria akceptacji:
 - w bazie zapisywane są timestampy started_at i finished_at dla każdej karty
 - system oblicza time_spent jako różnicę timestampów
+
+US-019
+Tytuł: Nauka za pomocą fiszek
+Opis: Jako uzytkownik chcę mieć mozliwość nauki za pomocą fiszek. Chcę mieć mozliwość oglądania fiszek jednej po drugiej. 
+Kryteria akceptacji:
+- fiszki wyświetlają się jedna po drugiej
+- fiszka ma 2 strony (pytanie i odpowiedź)
+- domyślnie fiszka pokazuje się ze odkrytą stroną pytania
+- po kliknięciu w fiszkę, fiszka obraca się pokazując drugą stronę
 
 ## 6. Metryki sukcesu
 - 75% fiszek wygenerowanych przez AI zostaje zaakceptowanych przez użytkowników

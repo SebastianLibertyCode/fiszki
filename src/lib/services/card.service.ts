@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { CardCreateCommand, CardDto, CardStatusUpdateCommand, CardUpdateCommand, PaginatedDto } from "../../types";
-import type { Database } from "../../db/database.types";
+import type { Database } from "@/db/database.types";
+import type { StudyCardDto, CardDto, CardCreateCommand, CardUpdateCommand, PaginatedDto } from "@/types";
 
 export class CardService {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
@@ -88,24 +88,42 @@ export class CardService {
     }
   }
 
-  async updateCardStatus(deckId: string, cardId: string, command: CardStatusUpdateCommand): Promise<CardDto> {
-    const { data, error } = await this.supabase
-      .from("cards")
-      .update({
-        status: command.status,
-        ...(command.status === "accepted" || command.status === "rejected"
-          ? { review_finished_at: new Date().toISOString() }
-          : {}),
-      })
-      .eq("deck_id", deckId)
-      .eq("id", cardId)
-      .select()
-      .single();
+  async updateCardStatus(cardId: string, status: Database["public"]["Enums"]["card_status"]): Promise<CardDto> {
+    const now = new Date().toISOString();
+    const updates = {
+      status,
+      review_started_at: now,
+      review_finished_at: now,
+    };
+
+    const { data, error } = await this.supabase.from("cards").update(updates).eq("id", cardId).select().single();
 
     if (error) {
       throw new Error(`Failed to update card status: ${error.message}`);
     }
 
     return data as CardDto;
+  }
+
+  async getStudyCards(deckId: string): Promise<StudyCardDto[]> {
+    const { data, error } = await this.supabase
+      .from("cards")
+      .select("id, question, answer, status, review_started_at, review_finished_at, time_spent")
+      .eq("deck_id", deckId)
+      .order("review_started_at", { ascending: true, nullsFirst: true });
+
+    if (error) {
+      throw new Error(`Failed to fetch study cards: ${error.message}`);
+    }
+
+    return data.map((card) => ({
+      id: card.id,
+      front: card.question,
+      back: card.answer,
+      status: card.status,
+      lastReviewedAt: card.review_started_at,
+      nextReviewAt: card.review_finished_at,
+      reviewCount: 0, // This will be calculated based on time_spent in a future update
+    }));
   }
 }

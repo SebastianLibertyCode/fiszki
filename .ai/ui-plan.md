@@ -44,7 +44,7 @@ Internacjonalizacja (i18n):
 3. Ekran Resetowania Hasła
    - Ścieżka: `/reset-password`
    - Cel: wysłanie linku do resetu hasła
-   - Kluczowe informacje: e-mail, komunikat „sprawdź skrzynkę”
+   - Kluczowe informacje: e-mail, komunikat "sprawdź skrzynkę"
    - Kluczowe komponenty: `AuthForm`, `Button`, `Toast`
 
 4. Ekran Weryfikacji E-mail
@@ -67,32 +67,39 @@ Internacjonalizacja (i18n):
    - Kluczowe komponenty: `CardList` (useInfiniteQuery), `CardItem`, `BulkActions`, `ModalCardForm`, `TextAreaWithCounter`, `NumberInput`, `ButtonGenerateAI`  
    - UX/A11y/Bezpieczeństwo: optymistyczne aktualizacje, focus trap w modalach
 
-7. Widok Generowania Fiszek AI
+7. Widok Nauki Fiszek
+   - Ścieżka: `/decks/:deckId/study`
+   - Cel: przeglądanie po kolei fiszek z danego decka w trybie pełnoekranowym
+   - Kluczowe informacje: fiszka ma dwie strony (pytanie, odpowiedź), domyślnie wyświetlana jest strona pytania, kliknięcie obraca fiszkę, nawigacja za pomocą strzałek (poprzednia, następna) po obu stronach ekranu
+   - Kluczowe komponenty: `StudyView`, `Flashcard`, `ArrowButton`, `FlipAnimation`
+   - UX/A11y/Bezpieczeństwo: pełnoekranowe wyświetlanie, animacja odwracania, obsługa strzałek klawiaturowych, aria-live dla zmiany treści, mechanizm wyjścia (przycisk zamknij lub Esc)
+
+8. Widok Generowania Fiszek AI
    - Wbudowany w szczegóły decka lub ścieżka `/decks/:deckId/generate`
    - Cel: wprowadzenie tekstu i liczby fiszek, uruchomienie AI
    - Kluczowe informacje: licznik znaków, default count, spinner + licznik czasu
    - Kluczowe komponenty: `TextAreaWithCounter`, `NumberInput`, `SpinnerTimeout`, `Button`, `Toast`
    - UX/A11y/Bezpieczeństwo: blokada >10 000 znaków, timeout 20 s, fallback retry
 
-8. Modal Dodawania/Edycji Karty
+9. Modal Dodawania/Edycji Karty
    - Cel: ręczne CRUD kart
    - Kluczowe informacje: pytanie ≤200 znaków, odpowiedź ≤500 znaków
    - Kluczowe komponenty: `Modal`, `FormField`, `Button`
    - UX/A11y/Bezpieczeństwo: aria-modal, focus management, walidacja
 
-9. Widok Przeglądu AI Fiszek
+10. Widok Przeglądu AI Fiszek
    - Zagnieżdżony w deck detail
    - Cel: batch accept/reject wygenerowanych kart
    - Kluczowe informacje: lista nowych kart, przycisk akceptuj/odrzuć, status
    - Kluczowe komponenty: `CardList`, `BulkActions`, `Toast`
 
-10. Profil Użytkownika
+11. Profil Użytkownika
     - Ścieżka: `/profile`
     - Cel: przegląd zużycia tokenów i ustawień
     - Kluczowe informacje: widget zużycia tokenów, alerty limitu, edycja profilu
     - Kluczowe komponenty: `TokenUsageWidget`, `ProgressBar`, `FormField`, `Button`
 
-11. Widok Metryk SLA
+12. Widok Metryk SLA
     - Ścieżka: `/metrics`
     - Cel: analiza latencji i outcome AI
     - Kluczowe informacje: wykresy P95, średnie czasy, wskaźniki sukcesu
@@ -116,12 +123,12 @@ Przykładowy główny scenariusz (generowanie fiszek AI):
 
 - Routing Astro:
   - Publiczne: `/login`, `/register`, `/reset-password`, `/verify-email`
-  - Chronione: `/decks`, `/decks/:deckId`, `/profile`, `/metrics`
+  - Chronione: `/decks`, `/decks/:deckId`, `/decks/:deckId/study`, `/profile`, `/metrics`
 - Layouty:
   - `PublicLayout` z prostym headerem
   - `ProtectedLayout` z sidebar (na desktop) i topbar z menu użytkownika i i18n switcher
 - Sidebar:
-  - Filtry: kategorie (multi-select), przycisk „Nowy deck”
+  - Filtry: kategorie (multi-select), przycisk "Nowy deck"
   - Lista decków w skrócie (miniaturki)
 - Topbar:
   - Avatar + menu profilu
@@ -142,4 +149,14 @@ Przykładowy główny scenariusz (generowanie fiszek AI):
 - Chart + Table (widok metryk)
 - Toast/Alert (komunikaty sukcesu/błędu)
 - i18nProvider + `<Text>` (internacjonalizacja)
+- ProtectedRoute / Guard (ochrona widoków)
+- StudyView (komponent widoku nauki fiszek)
+- Flashcard (komponent pojedynczej fiszki z dwoma stronami i animacją odwracania)
+- ArrowButton (nawigacja pomiędzy fiszkami)
+- FlipAnimation (animacja obracania fiszki)
+- i18nProvider + `<Text>` (internacjonalizacja)
+- StudyView (komponent widoku nauki fiszek)
+- Flashcard (komponent pojedynczej fiszki z dwoma stronami i animacją odwracania)
+- ArrowButton (nawigacja pomiędzy fiszkami)
+- FlipAnimation (animacja obracania fiszki)
 - ProtectedRoute / Guard (ochrona widoków) 

@@ -17,7 +17,7 @@ export function useCards(deckId: string, options: UseCardsOptions = {}) {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/decks/${deckId}/cards?status=pending&page=1&limit=50`);
+      const response = await fetch(`/api/decks/${deckId}/cards?page=1&limit=50`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch cards: ${response.statusText}`);

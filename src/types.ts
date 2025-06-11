@@ -1,4 +1,5 @@
 import type { Tables, Enums } from "./db/database.types";
+import type { Database } from "./db/database.types";
 
 // Metadata for pagination responses
 export interface PaginationMetaDto {
@@ -105,3 +106,14 @@ export type AiJobMetricsDto = Pick<Tables<"ai_metrics">, "latency_ms" | "outcome
 
 // DTO for daily token usage
 export type TokenUsageDto = Pick<Tables<"token_usage">, "tokens_used" | "usage_date">;
+
+// Study view DTOs
+export interface StudyCardDto {
+  id: string;
+  front: string;
+  back: string;
+  status: Database["public"]["Enums"]["card_status"];
+  lastReviewedAt: string | null;
+  nextReviewAt: string | null;
+  reviewCount: number;
+}

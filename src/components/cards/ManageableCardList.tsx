@@ -8,6 +8,7 @@ import { CardModal } from "./CardModal";
 import { useCards } from "@/lib/hooks/useCards";
 import type { CardDto } from "@/types";
 import type { CardFormValues } from "@/lib/schemas/card";
+import { useEffect } from "react";
 
 interface ManageableCardListProps {
   deckId: string;
@@ -18,7 +19,11 @@ export function ManageableCardList({ deckId }: ManageableCardListProps) {
   const [editingCard, setEditingCard] = useState<CardDto | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { cards, isLoading, error, addCard, updateCard, deleteCard } = useCards(deckId);
+  const { cards, isLoading, error, addCard, updateCard, deleteCard, refetch } = useCards(deckId);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const handleAddCard = async (values: CardFormValues) => {
     try {

@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { BookOpen } from "lucide-react";
 
 interface DeckHeaderProps {
   deck: DeckDto;
@@ -41,6 +42,10 @@ export function DeckHeader({ deck, onEdit, onDelete }: DeckHeaderProps) {
     setIsDeleteDialogOpen(false);
   };
 
+  const handleStartStudy = () => {
+    window.location.href = `/decks/${deck.id}/study`;
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -49,6 +54,10 @@ export function DeckHeader({ deck, onEdit, onDelete }: DeckHeaderProps) {
           <p className="text-sm text-muted-foreground">{deck.description}</p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={handleStartStudy} className="gap-2">
+            <BookOpen className="h-4 w-4" />
+            Start Study
+          </Button>
           <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">Edit</Button>

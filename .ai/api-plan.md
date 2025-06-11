@@ -96,6 +96,16 @@
   ```
 - Response 200: Updated card with new status and timestamps.
 
+#### GET /api/decks/:deckId/cards/study
+- Description: Retrieve all cards ready for study from a deck (accepted status).
+- Response 200:
+  ```json
+  [
+    { "id": "uuid", "question": "string", "answer": "string" }
+  ]
+  ```
+- Notes: Returns full list of cards without pagination for sequential, full-screen study.
+
 ### 2.5 AI Job Management
 
 #### POST /api/decks/:deckId/ai-jobs

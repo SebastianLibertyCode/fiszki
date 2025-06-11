@@ -1,0 +1,14 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { StudyView } from "@/components/study/StudyView";
+
+const { deckId } = Astro.params;
+
+if (!deckId) {
+  return Astro.redirect("/decks");
+}
+---
+
+<Layout title="Study Deck">
+  <StudyView client:load deckId={deckId} />
+</Layout>

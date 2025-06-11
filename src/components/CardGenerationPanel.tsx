@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import type { AiJobCreateCommand, AiJobCreateResponseDto } from "@/types";
+import { Loader2 } from "lucide-react";
 
 const MAX_TEXT_LENGTH = 10000;
 
@@ -28,7 +29,8 @@ export function CardGenerationPanel({ deckId }: CardGenerationPanelProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to start AI generation");
+        const error = await response.json();
+        throw new Error(error.error || "Failed to start AI generation");
       }
 
       return response.json() as Promise<AiJobCreateResponseDto>;
@@ -40,8 +42,8 @@ export function CardGenerationPanel({ deckId }: CardGenerationPanelProps) {
       });
       setInputText("");
     },
-    onError: () => {
-      toast.error("Failed to start AI generation");
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Failed to start AI generation");
     },
   });
 
@@ -100,8 +102,19 @@ export function CardGenerationPanel({ deckId }: CardGenerationPanelProps) {
             />
           </div>
           <div className="flex justify-end">
-            <Button type="submit" disabled={isOverLimit || generateCardsMutation.isPending || characterCount === 0}>
-              {generateCardsMutation.isPending ? "Generating..." : "Generate Cards"}
+            <Button
+              type="submit"
+              disabled={isOverLimit || generateCardsMutation.isPending || characterCount === 0}
+              className="min-w-[140px]"
+            >
+              {generateCardsMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Cards"
+              )}
             </Button>
           </div>
         </form>
