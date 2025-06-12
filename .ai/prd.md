@@ -71,69 +71,83 @@ Kryteria akceptacji:
 - prawidłowe dane logowania kierują do głównego widoku decków
 - nieprawidłowe dane wyświetlają komunikat o błędnych danych
 
-US-003
+US-003: Bezpieczny dostęp i uwierzytelnianie
+Tytuł: Bezpieczny dostęp
+Opis: Jako użytkownik chcę mieć możliwość rejestracji i logowania się do systemu w sposób zapewniający bezpieczeństwo moich danych.
+Kryteria akceptacji:
+- Logowanie i rejestracja odbywają się na dedykowanych stronach.
+- Logowanie wymaga podania adresu email i hasła.
+- Rejestracja wymaga podania adresu email, hasła i potwierdzenia hasła.
+- Użytkownik MOŻE korzystać z tworzenia reguł "ad-hoc" bez logowania się do systemu (US-001).
+- Użytkownik NIE MOŻE korzystać z funkcji Kolekcji bez logowania się do systemu (US-003).
+- Użytkownik może logować się do systemu poprzez przycisk w prawym górnym rogu.
+- Użytkownik może się wylogować z systemu poprzez przycisk w prawym górnym rogu w głównym @Layout.astro.
+- Nie korzystamy z zewnętrznych serwisów logowania (np. Google, GitHub).
+- Odzyskiwanie hasła powinno być możliwe.
+
+US-004
 Tytuł: Reset hasła
 Opis: Jako użytkownik chcę odzyskać dostęp do konta przez reset hasła, aby ponownie się zalogować.
 Kryteria akceptacji:
 - system wysyła e‑mail z linkiem do resetu ważnym 24 h
 - kliknięcie linku pozwala ustawić nowe hasło
 
-US-004
+US-005
 Tytuł: Aktualizacja profilu
 Opis: Jako zalogowany użytkownik chcę edytować dane profilowe, aby aktualizować swoje informacje.
 Kryteria akceptacji:
 - formularz profilu wyświetla aktualne dane
 - po zapisaniu zmiany są widoczne w profilu
 
-US-005
+US-006
 Tytuł: Tworzenie decku
 Opis: Jako użytkownik chcę utworzyć nowy deck z nazwą, opisem, linkiem źródłowym i limitem kart, aby grupować fiszki.
 Kryteria akceptacji:
 - formularz przyjmuje nazwę, opcjonalny opis, źródło, limit kart i kategorie
 - po zapisaniu deck pojawia się na liście decków
 
-US-006
+US-007
 Tytuł: Listowanie decków
 Opis: Jako użytkownik chcę zobaczyć listę wszystkich moich decków, aby szybko nawigować między nimi.
 Kryteria akceptacji:
 - lista wyświetla nazwę, datę utworzenia i źródło każdego decku
 - kliknięcie przenosi do widoku kart w decku
 
-US-007
+US-008
 Tytuł: Edycja decku
 Opis: Jako użytkownik chcę edytować właściwości decku, aby poprawić lub zaktualizować dane.
 Kryteria akceptacji:
 - zmiany nazwy, opisu, źródła, limitu kart lub kategorii można zapisać
 - po zapisaniu zmiany są widoczne na liście i w widoku decku
 
-US-008
+US-009
 Tytuł: Usuwanie decku
 Opis: Jako użytkownik chcę usunąć niepotrzebny deck, aby utrzymać porządek w aplikacji.
 Kryteria akceptacji:
 - po potwierdzeniu deck zostaje usunięty z listy
 - powiązane karty są kasowane z bazy danych
 
-US-009
+US-010
 Tytuł: Ręczne dodawanie karty
 Opis: Jako użytkownik chcę dodać kartę ręcznie z pytaniem i odpowiedzią, aby uzupełnić deck.
 Kryteria akceptacji:
 - formularz wymaga pytania (max 200 znaków) i odpowiedzi (max 500 znaków)
 - karta pojawia się w widoku decku po zapisaniu
 
-US-010
+US-011
 Tytuł: Edycja karty
 Opis: Jako użytkownik chcę edytować treść istniejącej karty, aby poprawić błędy lub uzupełnić informacje.
 Kryteria akceptacji:
 - możliwa zmiana pytania i odpowiedzi z zachowaniem limitów znaków
 - zapisane zmiany od razu widoczne
 
-US-011
+US-012
 Tytuł: Usuwanie karty
 Opis: Jako użytkownik chcę usunąć niepotrzebną kartę z decku.
 Kryteria akceptacji:
 - karta znika z widoku po potwierdzeniu usunięcia
 
-US-012
+US-013
 Tytuł: Generowanie fiszek AI
 Opis: Jako użytkownik chcę wkleić tekst (do 10 000 znaków) i ustawić maksymalną liczbę kart, aby AI wygenerowało zestaw fiszek.
 Kryteria akceptacji:
@@ -142,14 +156,14 @@ Kryteria akceptacji:
 - po kliknięciu generuj wywołanie AI trwa maks. 20 s (P95)
 - po sukcesie lista kart pojawia się z odniesieniem do źródła tekstu
 
-US-013
+US-014
 Tytuł: Obsługa przekroczenia limitu tekstu
 Opis: Jako użytkownik chcę otrzymać komunikat błędu, gdy wkleję tekst dłuższy niż 10 000 znaków.
 Kryteria akceptacji:
 - przy próbie generacji tekstu >10 000 znaków wyświetlany jest komunikat "Limit znaków przekroczony"
 - żądanie do AI nie jest wysyłane
 
-US-014
+US-015
 Tytuł: Retry i backoff przy błędzie AI
 Opis: Jako użytkownik chcę widzieć pasek postępu i przycisk ponów, gdy żądanie do AI przekroczy timeout lub wystąpi błąd.
 Kryteria akceptacji:
@@ -157,7 +171,7 @@ Kryteria akceptacji:
 - UI wyświetla spinner lub pasek postępu i przycisk „Ponów”
 - kliknięcie „Ponów” inicjuje kolejną próbę
 
-US-015
+US-016
 Tytuł: Akceptacja i odrzucenie fiszek
 Opis: Jako użytkownik chcę zaakceptować lub odrzucić każdą fiszkę wygenerowaną przez AI.
 Kryteria akceptacji:
@@ -165,27 +179,27 @@ Kryteria akceptacji:
 - status karty zmienia się na zaakceptowany lub odrzucony
 - możliwa zmiana statusu po zapisaniu
 
-US-016
+US-017
 Tytuł: Usuwanie odrzuconych kart
 Opis: Jako użytkownik chcę, aby odrzucone karty były automatycznie usuwane po zakończeniu przeglądu.
 Kryteria akceptacji:
 - po wyjściu z trybu przeglądu odrzucone karty są usunięte z decku
 
-US-017
+US-018
 Tytuł: Monitorowanie zużycia tokenów
 Opis: Jako użytkownik chcę być blokowany przed generowaniem kolejnych fiszek, gdy wykorzystam darmowy limit tokenów.
 Kryteria akceptacji:
 - zużycie tokenów jest śledzone per użytkownik
 - przy próbie przekroczenia limitu wyświetlany jest komunikat "Limit tokenów przekroczony"
 
-US-018
+US-019
 Tytuł: Rejestrowanie czasu spędzonego na karcie
 Opis: Jako produkt chcę rejestrować czas od rozpoczęcia generacji do akceptacji/odrzucenia karty, aby analizować efektywność.
 Kryteria akceptacji:
 - w bazie zapisywane są timestampy started_at i finished_at dla każdej karty
 - system oblicza time_spent jako różnicę timestampów
 
-US-019
+US-020
 Tytuł: Nauka za pomocą fiszek
 Opis: Jako uzytkownik chcę mieć mozliwość nauki za pomocą fiszek. Chcę mieć mozliwość oglądania fiszek jednej po drugiej. 
 Kryteria akceptacji:

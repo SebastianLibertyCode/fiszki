@@ -1,0 +1,13 @@
+---
+import AuthLayout from "@/layouts/AuthLayout.astro";
+import { UpdatePasswordForm } from "@/components/auth/UpdatePasswordForm";
+
+const { token } = Astro.params;
+if (!token) {
+  return Astro.redirect("/login");
+}
+---
+
+<AuthLayout>
+  <UpdatePasswordForm client:load />
+</AuthLayout>

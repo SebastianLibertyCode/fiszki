@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
-import { RegisterForm } from "@/components/auth/RegisterForm";
+import { LoginForm } from "@/components/auth/LoginForm";
 import { createSupabaseServerInstance } from "@/db/supabase.client";
 
 // Redirect if user is already logged in
@@ -14,11 +14,11 @@ if (user) {
 }
 ---
 
-<Layout title="Sign up - Fiszki">
+<Layout title="Sign in - Fiszki">
   <main class="container mx-auto px-4 py-8">
     <div class="mx-auto max-w-md">
       <div class="rounded-lg border bg-card p-8 text-card-foreground shadow-sm">
-        <RegisterForm client:load />
+        <LoginForm client:load />
       </div>
     </div>
   </main>

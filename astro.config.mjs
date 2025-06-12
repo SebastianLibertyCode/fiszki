@@ -16,8 +16,8 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     define: {
-      "process.env.PUBLIC_SUPABASE_URL": JSON.stringify(env.PUBLIC_SUPABASE_URL),
-      "process.env.PUBLIC_SUPABASE_ANON_KEY": JSON.stringify(env.PUBLIC_SUPABASE_ANON_KEY),
+      "process.env.SUPABASE_URL": JSON.stringify(env.SUPABASE_URL),
+      "process.env.SUPABASE_ANON_KEY": JSON.stringify(env.SUPABASE_ANON_KEY),
     },
   },
   adapter: node({

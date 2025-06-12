@@ -8,65 +8,49 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
-const registerSchema = z
-  .object({
-    email: z.string().email("Invalid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords must match",
-    path: ["confirmPassword"],
-  });
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function RegisterForm() {
+export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
-  async function onSubmit(data: RegisterFormValues) {
+  async function onSubmit(data: LoginFormValues) {
     setIsLoading(true);
     setError(null);
-    setSuccess(null);
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Failed to create account");
+        throw new Error(result.error || "Failed to sign in");
       }
 
-      setSuccess(result.message || "Registration successful! Please check your email to verify your account.");
-      form.reset();
+      // Redirect to /decks on successful login
+      window.location.href = "/decks";
     } catch (error) {
       setError(error instanceof Error ? error.message : "An unexpected error occurred");
-      console.error("Registration error:", error);
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +59,8 @@ export function RegisterForm() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Create an account</h1>
-        <p className="text-base text-muted-foreground">Enter your details to get started with Fiszki</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
+        <p className="text-base text-muted-foreground">Enter your credentials to access your account</p>
       </div>
 
       <Form {...form}>
@@ -84,12 +68,6 @@ export function RegisterForm() {
           {error && (
             <Alert variant="destructive" className="text-sm">
               <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="text-sm border-green-500 text-green-700">
-              <AlertDescription>{success}</AlertDescription>
             </Alert>
           )}
 
@@ -121,33 +99,17 @@ export function RegisterForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-base">Password</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel className="text-base">Password</FormLabel>
+                  <a href="/auth/reset-password" className="text-sm font-medium text-primary hover:underline">
+                    Forgot password?
+                  </a>
+                </div>
                 <FormControl>
                   <Input
-                    placeholder="Create a strong password"
+                    placeholder="Enter your password"
                     type="password"
-                    autoComplete="new-password"
-                    disabled={isLoading}
-                    className="h-10"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage className="text-xs" />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base">Confirm Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Confirm your password"
-                    type="password"
-                    autoComplete="new-password"
+                    autoComplete="current-password"
                     disabled={isLoading}
                     className="h-10"
                     {...field}
@@ -160,7 +122,7 @@ export function RegisterForm() {
 
           <Button type="submit" className="w-full h-10" disabled={isLoading}>
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
-            Create account
+            Sign in
           </Button>
         </form>
       </Form>
@@ -175,9 +137,9 @@ export function RegisterForm() {
       </div>
 
       <div className="text-sm text-center space-y-2">
-        <p className="text-muted-foreground">Already have an account?</p>
+        <p className="text-muted-foreground">New to Fiszki?</p>
         <Button variant="outline" className="w-full h-10" asChild>
-          <a href="/login">Sign in</a>
+          <a href="/register">Create an account</a>
         </Button>
       </div>
     </div>
