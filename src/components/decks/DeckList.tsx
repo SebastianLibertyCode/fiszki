@@ -12,7 +12,7 @@ interface DeckListProps {
 }
 
 export function DeckList({ decks, loading, error, hasMore, onLoadMore }: DeckListProps) {
-  const observerRef = useRef<IntersectionObserver>();
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const lastDeckRef = useRef<HTMLDivElement>(null);
 
   const handleDeckClick = (id: string) => {

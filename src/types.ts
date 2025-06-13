@@ -1,5 +1,21 @@
 import type { Tables, Enums } from "./db/database.types";
 import type { Database } from "./db/database.types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+declare global {
+  namespace App {
+    interface Locals {
+      user: {
+        id: string;
+        email: string;
+      };
+      accessToken: string;
+      supabase: SupabaseClient;
+    }
+  }
+}
+
+export {};
 
 // Metadata for pagination responses
 export interface PaginationMetaDto {

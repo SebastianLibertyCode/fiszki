@@ -1,12 +1,14 @@
 // @ts-check
+/// <reference types="node" />
 import { defineConfig } from "astro/config";
 import { loadEnv } from "vite";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import node from "@astrojs/node";
+import process from "node:process";
 
-const env = loadEnv(process.env.NODE_ENV, process.cwd(), "");
+const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
 // https://astro.build/config
 export default defineConfig({

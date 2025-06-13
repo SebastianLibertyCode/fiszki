@@ -1,6 +1,11 @@
 import type { APIRoute } from "astro";
 import { CardService } from "@/lib/services/card.service";
 import { updateCardStatusSchema } from "@/lib/schemas/card.schema";
+import { z } from "zod";
+
+const bodySchema = z.object({
+  status: z.enum(["pending", "accepted", "rejected"]),
+});
 
 export const PATCH: APIRoute = async ({ params, request, locals }) => {
   try {

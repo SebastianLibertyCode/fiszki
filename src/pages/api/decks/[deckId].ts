@@ -69,10 +69,14 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
 
     const supabase = locals.supabase;
     const deckService = new DeckService(supabase);
-    const updateCommand: DeckUpdateCommand = validationResult.data;
+    const updateCommand: DeckUpdateCommand = {
+      ...validationResult.data,
+      description: validationResult.data.description ?? null,
+      card_limit: validationResult.data.card_limit ?? null,
+    };
 
     try {
-      const updatedDeck = await deckService.updateDeck(deckId, locals.user.id, updateCommand);
+      const updatedDeck = await deckService.updateDeck(deckId, updateCommand, locals.user.id);
       return new Response(JSON.stringify(updatedDeck), {
         status: 200,
         headers: { "Content-Type": "application/json" },
