@@ -21,6 +21,28 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       );
     }
 
+    // Set auth cookies
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData?.session) {
+      const { access_token, refresh_token } = sessionData.session;
+
+      cookies.set("sb-access-token", access_token, {
+        path: "/",
+        httpOnly: true,
+        secure: import.meta.env.PROD,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      });
+
+      cookies.set("sb-refresh-token", refresh_token, {
+        path: "/",
+        httpOnly: true,
+        secure: import.meta.env.PROD,
+        sameSite: "lax",
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+      });
+    }
+
     return new Response(
       JSON.stringify({
         user: {

@@ -1,8 +1,8 @@
 ---
+import AuthedLayout from "@/layouts/AuthedLayout.astro";
 import DecksDashboard from "@/components/decks/DecksDashboard";
-import Layout from "@/layouts/Layout.astro";
 ---
 
-<Layout title="Decks Dashboard">
+<AuthedLayout title="Your Decks - Fiszki">
   <DecksDashboard client:load />
-</Layout>
+</AuthedLayout>

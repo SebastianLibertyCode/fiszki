@@ -246,4 +246,59 @@ export class OpenRouterService {
       return this._validateInput(data, ChatResponseSchema);
     });
   }
+
+  public async generateCard(command: {
+    topic: string;
+    language: string;
+  }): Promise<{ question: string; answer: string; tags?: string[] }> {
+    const systemPrompt = `You are a helpful assistant that creates flashcards. Create a single flashcard about the given topic.
+The flashcard should have a question that tests understanding of a specific concept, and a concise but complete answer.
+Format your response as a JSON object with "question", "answer", and optionally "tags" fields.
+The response should be in ${command.language} language.`;
+
+    const response = await this.sendChat(
+      [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: command.topic },
+      ],
+      {
+        responseFormat: {
+          type: "json_schema",
+          json_schema: {
+            name: "FlashcardSchema",
+            strict: true,
+            schema: {
+              type: "object",
+              properties: {
+                question: { type: "string" },
+                answer: { type: "string" },
+                tags: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+              },
+              required: ["question", "answer"],
+            },
+          },
+        },
+      }
+    );
+
+    if (!response?.choices?.[0]?.message?.content) {
+      throw new Error("No response from AI");
+    }
+
+    try {
+      const content = response.choices[0].message.content;
+      const parsedContent = typeof content === "string" ? JSON.parse(content) : content;
+
+      if (!parsedContent.question || !parsedContent.answer) {
+        throw new Error("Failed to parse AI response");
+      }
+
+      return parsedContent;
+    } catch {
+      throw new Error("Failed to parse AI response");
+    }
+  }
 }

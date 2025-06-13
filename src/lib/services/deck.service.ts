@@ -52,6 +52,11 @@ export class DeckService {
   async createDeck(command: DeckCreateCommand, userId: string): Promise<DeckDto> {
     const { category_ids, ...deckData } = command;
 
+    // Validate deck name
+    if (!deckData.name || deckData.name.trim() === "") {
+      throw new Error("Deck name is required");
+    }
+
     // Insert deck
     const { data: deck, error: deckError } = await this.supabase
       .from("decks")
@@ -92,10 +97,15 @@ export class DeckService {
   }
 
   async getDeck(deckId: string, userId: string): Promise<DeckDto> {
-    // Get deck with basic fields
+    // Get deck with basic fields and card count
     const { data: deck, error: deckError } = await this.supabase
       .from("decks")
-      .select()
+      .select(
+        `
+        *,
+        cards:cards(count)
+      `
+      )
       .eq("id", deckId)
       .eq("user_id", userId)
       .single();
@@ -116,6 +126,7 @@ export class DeckService {
 
     return {
       ...deck,
+      card_count: deck.cards?.[0]?.count ?? 0,
       categories: categories?.map((c) => c.categories) || [],
     };
   }

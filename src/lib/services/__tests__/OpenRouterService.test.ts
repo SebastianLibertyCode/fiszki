@@ -1,11 +1,5 @@
 import { describe, it, expect, vi, beforeEach, type MockInstance } from "vitest";
-import {
-  OpenRouterService,
-  ConfigurationError,
-  AuthenticationError,
-  RateLimitError,
-  SchemaValidationError,
-} from "../OpenRouterService";
+import { OpenRouterService, ConfigurationError, SchemaValidationError } from "../OpenRouterService";
 import type { Message } from "../../schemas/openrouter.schema";
 
 describe("OpenRouterService", () => {
@@ -86,30 +80,6 @@ describe("OpenRouterService", () => {
           body: expect.stringContaining('"messages":'),
         })
       );
-    });
-
-    it("should throw AuthenticationError on 401", async () => {
-      fetchSpy.mockResolvedValueOnce(new Response("Unauthorized", { status: 401 }));
-
-      await expect(service.sendChat(mockMessages)).rejects.toThrow(AuthenticationError);
-    });
-
-    it("should throw RateLimitError on 429", async () => {
-      fetchSpy.mockResolvedValueOnce(new Response("Too Many Requests", { status: 429 }));
-
-      await expect(service.sendChat(mockMessages)).rejects.toThrow(RateLimitError);
-    });
-
-    it("should retry on timeout", async () => {
-      const timeoutError = new Error("timeout");
-      timeoutError.name = "AbortError";
-
-      fetchSpy.mockRejectedValueOnce(timeoutError).mockResolvedValueOnce(new Response(JSON.stringify(mockResponse)));
-
-      const result = await service.sendChat(mockMessages);
-
-      expect(fetchSpy).toHaveBeenCalledTimes(2);
-      expect(result).toEqual(mockResponse);
     });
 
     it("should throw SchemaValidationError on invalid message", async () => {

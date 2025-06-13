@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { DeckHeader } from "./DeckHeader";
 import { CardGenerationPanel } from "./CardGenerationPanel";
 import { ManageableCardList } from "./cards/ManageableCardList";
+import { Button } from "./ui/button";
+import { ChevronLeft } from "lucide-react";
 
 interface DeckDetailsProps {
   deckId: string;
@@ -24,7 +26,8 @@ export function DeckDetails({ deckId }: DeckDetailsProps) {
       if (!response.ok) {
         throw new Error("Failed to fetch deck");
       }
-      return response.json();
+      const data = await response.json();
+      return data;
     },
   });
 
@@ -83,6 +86,12 @@ export function DeckDetails({ deckId }: DeckDetailsProps) {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
+      <Button variant="ghost" asChild className="mb-4">
+        <a href="/decks" className="flex items-center gap-2">
+          <ChevronLeft className="h-4 w-4" />
+          Back to Decks
+        </a>
+      </Button>
       <DeckHeader
         deck={deck}
         onEdit={(updateCommand) => updateDeckMutation.mutate(updateCommand)}

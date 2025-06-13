@@ -28,6 +28,15 @@ AI Fiszki enables students and learners to quickly generate, review, and manage 
   - Supabase (PostgreSQL, Auth, SDK)
 - **AI Integration:**
   - Openrouter.ai (Access to GPT‑4o‑mini and other models)
+- **Testing:**
+  - Vitest (Unit and integration testing framework)
+  - React Testing Library (React component testing)
+  - Playwright (End-to-end testing)
+  - MSW (Mock Service Worker for API mocking)
+  - Storybook + Chromatic (Visual testing and component documentation)
+  - Axe-core + Lighthouse (Accessibility and performance audits)
+  - k6 (Performance testing)
+  - Pact (Contract testing)
 - **CI/CD & Hosting:**
   - GitHub Actions
   - DigitalOcean (Docker deployment)
@@ -83,6 +92,10 @@ These scripts are defined in `package.json`:
 - `npm run lint` — Run ESLint
 - `npm run lint:fix` — Run ESLint with automatic fixes
 - `npm run format` — Run Prettier to format code
+- `npm run test` — Run unit and integration tests with Vitest
+- `npm run test:e2e` — Run end-to-end tests with Playwright
+- `npm run test:coverage` — Run tests with coverage report
+- `npm run storybook` — Start Storybook for component development and testing
 
 ## Project Scope
 

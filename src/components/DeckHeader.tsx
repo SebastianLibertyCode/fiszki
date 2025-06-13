@@ -128,7 +128,9 @@ export function DeckHeader({ deck, onEdit, onDelete }: DeckHeaderProps) {
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div>Cards: {deck.card_limit || "Unlimited"}</div>
+          <div>
+            Cards: {deck.card_count} / {deck.card_limit || "Unlimited"}
+          </div>
           <div>Created: {new Date(deck.created_at).toLocaleDateString()}</div>
           <div>Updated: {new Date(deck.updated_at).toLocaleDateString()}</div>
         </div>

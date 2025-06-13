@@ -2,7 +2,6 @@ import type { APIRoute } from "astro";
 import { createClient } from "@/db/client";
 import type { DeckSummaryDto, PaginatedDto } from "@/types";
 import { z } from "zod";
-import { DEFAULT_USER_ID } from "@/db/supabase.client";
 import { deckCreateSchema } from "@/lib/validation/deck-create.schema";
 
 export const prerender = false;
@@ -16,7 +15,7 @@ const querySchema = z.object({
     .transform((val) => val?.split(",") ?? []),
 });
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
   try {
     const searchParams = Object.fromEntries(url.searchParams);
     const { page, limit, categories } = querySchema.parse(searchParams);
@@ -26,7 +25,7 @@ export const GET: APIRoute = async ({ url }) => {
     let query = supabase
       .from("decks")
       .select("id, name, description, card_limit, created_at, updated_at", { count: "exact" })
-      .eq("user_id", DEFAULT_USER_ID);
+      .eq("user_id", locals.user.id);
 
     if (categories.length > 0) {
       const deckIds = await supabase
@@ -62,13 +61,7 @@ export const GET: APIRoute = async ({ url }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return new Response(JSON.stringify({ error: "Invalid query parameters" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-
+    console.error("Error fetching decks:", error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -76,7 +69,7 @@ export const GET: APIRoute = async ({ url }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const body = await request.json();
     const validationResult = deckCreateSchema.safeParse(body);
@@ -96,7 +89,7 @@ export const POST: APIRoute = async ({ request }) => {
         name: deck.name,
         description: deck.description,
         card_limit: deck.card_limit,
-        user_id: DEFAULT_USER_ID,
+        user_id: locals.user.id,
       })
       .select()
       .single();
@@ -117,7 +110,6 @@ export const POST: APIRoute = async ({ request }) => {
       );
 
       if (categoryError) {
-        // Log error but don't fail the request
         console.error("Failed to attach categories:", categoryError);
       }
     }

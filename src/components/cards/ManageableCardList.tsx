@@ -19,10 +19,10 @@ export function ManageableCardList({ deckId }: ManageableCardListProps) {
   const [editingCard, setEditingCard] = useState<CardDto | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { cards, isLoading, error, addCard, updateCard, deleteCard, refetch } = useCards(deckId);
+  const { cards = [], isLoading, error, addCard, updateCard, deleteCard, refetch } = useCards(deckId);
 
   useEffect(() => {
-    refetch();
+    void refetch();
   }, [refetch]);
 
   const handleAddCard = async (values: CardFormValues) => {

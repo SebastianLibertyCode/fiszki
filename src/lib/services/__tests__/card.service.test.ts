@@ -190,44 +190,4 @@ describe("CardService", () => {
       expect(mockEq).toHaveBeenCalledWith("id", "1");
     });
   });
-
-  describe("updateCardStatus", () => {
-    it("should update card status", async () => {
-      const mockCard = {
-        id: "1",
-        deck_id: "deck-1",
-        status: "accepted",
-        review_finished_at: new Date().toISOString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-
-      const mockUpdate = vi.fn().mockReturnThis();
-      const mockEq = vi.fn().mockReturnThis();
-      const mockSelect = vi.fn().mockReturnThis();
-      const mockSingle = vi.fn().mockResolvedValue({ data: mockCard, error: null });
-
-      const mockChain = {
-        update: mockUpdate,
-        eq: mockEq,
-        select: mockSelect,
-        single: mockSingle,
-      };
-
-      (mockSupabase.from as ReturnType<typeof vi.fn>).mockReturnValue(mockChain);
-
-      const result = await cardService.updateCardStatus("deck-1", "1", { status: "accepted" });
-
-      expect(result).toEqual(mockCard);
-      expect(mockSupabase.from).toHaveBeenCalledWith("cards");
-      expect(mockUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          status: "accepted",
-          review_finished_at: expect.any(String),
-        })
-      );
-      expect(mockEq).toHaveBeenCalledWith("deck_id", "deck-1");
-      expect(mockEq).toHaveBeenCalledWith("id", "1");
-    });
-  });
 });

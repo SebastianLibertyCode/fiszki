@@ -37,6 +37,8 @@ export function CardGenerationPanel({ deckId }: CardGenerationPanelProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["deck", deckId, "cards"] });
+      queryClient.invalidateQueries({ queryKey: ["deck", deckId] });
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
       toast.success("AI generation started", {
         description: "Your cards will appear in the list below once they're ready.",
       });

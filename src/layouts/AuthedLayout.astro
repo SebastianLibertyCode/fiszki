@@ -1,0 +1,20 @@
+---
+import Layout from "./Layout.astro";
+import { Header } from "@/components/Header";
+import type { User } from "@/types";
+
+interface Props {
+  title: string;
+}
+
+// Get user from locals (set by middleware)
+const user = Astro.locals.user as User;
+const { title } = Astro.props;
+---
+
+<Layout title={title}>
+  <Header client:load user={user} />
+  <main class="container mx-auto px-4 py-8">
+    <slot />
+  </main>
+</Layout>

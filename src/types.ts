@@ -26,6 +26,7 @@ export type DeckSummaryDto = Pick<
 // Full deck DTO including associated categories
 export interface DeckDto extends DeckSummaryDto {
   categories: CategoryDto[];
+  card_count: number;
 }
 
 // Command to create a new deck
@@ -116,4 +117,10 @@ export interface StudyCardDto {
   lastReviewedAt: string | null;
   nextReviewAt: string | null;
   reviewCount: number;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  created_at: string;
 }
