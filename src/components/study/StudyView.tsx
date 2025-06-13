@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { StudySummary } from "./StudySummary";
 import { CardActions } from "./CardActions";
 import { fireConfetti } from "@/lib/utils";
-import type { StudySession } from "@/types";
+import type { StudySession, StudyCardDto } from "@/types";
 import type { Enums } from "@/db/database.types";
 import { Flashcard } from "./Flashcard";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ function useStudyCards(deckId: string) {
 
   useEffect(() => {
     fetchCards();
-  }, [deckId]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     cards,
@@ -52,10 +52,9 @@ function useStudyCards(deckId: string) {
 }
 
 function StudyViewContent({ deckId }: StudyViewProps) {
-  const { cards, loading, error, retry } = useStudyCards(deckId);
+  const { cards, loading, error, retry: fetchCards } = useStudyCards(deckId);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [setTransitionDirection] = useState<"left" | "right" | null>(null);
   const [knownCards, setKnownCards] = useState(0);
   const [unknownCards, setUnknownCards] = useState(0);
   const [showActions, setShowActions] = useState(false);
@@ -117,30 +116,28 @@ function StudyViewContent({ deckId }: StudyViewProps) {
     }
   };
 
-  const goToPrev = () => {
+  const goToPrev = useCallback(() => {
     if (currentIndex > 0) {
       setIsFlipped(false);
       setShowActions(false);
-      setTransitionDirection("left");
       setCurrentIndex((prev) => prev - 1);
     }
-  };
+  }, [currentIndex]);
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     if (currentIndex < cards.length - 1) {
       setIsFlipped(false);
       setShowActions(false);
-      setTransitionDirection("right");
       setCurrentIndex((prev) => prev + 1);
     }
-  };
+  }, [currentIndex, cards.length]);
 
-  const toggleFlip = () => {
+  const toggleFlip = useCallback(() => {
     setIsFlipped(!isFlipped);
     if (!isFlipped) {
       setShowActions(true);
     }
-  };
+  }, [isFlipped]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -155,7 +152,7 @@ function StudyViewContent({ deckId }: StudyViewProps) {
 
   useEffect(() => {
     fetchCards();
-  }, [fetchCards]);
+  }, []);
 
   if (loading) {
     return (
@@ -169,7 +166,7 @@ function StudyViewContent({ deckId }: StudyViewProps) {
     return (
       <div className="fixed inset-0 bg-gray-900 flex flex-col items-center justify-center gap-4">
         <p className="text-white">{error}</p>
-        <Button onClick={retry} variant="secondary">
+        <Button onClick={fetchCards} variant="secondary">
           Try Again
         </Button>
       </div>

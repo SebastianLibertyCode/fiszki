@@ -142,3 +142,10 @@ export interface User {
   email: string;
   created_at: string;
 }
+
+export interface StudySession {
+  totalCards: number;
+  knownCards: number;
+  unknownCards: number;
+  duration: number;
+}
