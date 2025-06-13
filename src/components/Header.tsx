@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { toast } from "sonner";
 
 interface HeaderProps {
   user: {
@@ -25,7 +26,8 @@ export function Header({ user }: HeaderProps) {
       // Redirect to login page
       window.location.href = "/login";
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error(error);
+      toast.error("Failed to sign out");
       setIsLoading(false);
     }
   };

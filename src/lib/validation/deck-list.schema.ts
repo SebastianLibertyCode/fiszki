@@ -8,7 +8,9 @@ const sortSchema = z
   .regex(/^[a-zA-Z_]+:(asc|desc)$/)
   .transform((val) => {
     const [field, order] = val.split(":");
-    return { field: field as z.infer<typeof sortFieldSchema>, order: order as z.infer<typeof sortOrderSchema> };
+    const validField = sortFieldSchema.parse(field);
+    const validOrder = sortOrderSchema.parse(order);
+    return { field: validField, order: validOrder };
   })
   .optional()
   .default("created_at:desc");

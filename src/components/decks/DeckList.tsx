@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DeckSummaryDto } from "@/types";
 import { DeckCard } from "./DeckCard";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,42 +14,38 @@ interface DeckListProps {
 export function DeckList({ decks, loading, error, hasMore, onLoadMore }: DeckListProps) {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastDeckRef = useRef<HTMLDivElement>(null);
+  const [navigateTo, setNavigateTo] = useState<string | null>(null);
 
   const handleDeckClick = (id: string) => {
-    window.location.href = `/decks/${id}`;
+    setNavigateTo(`/decks/${id}`);
   };
 
-  const handleObserver = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [target] = entries;
-      if (target.isIntersecting && hasMore && !loading) {
-        onLoadMore();
-      }
-    },
-    [hasMore, loading, onLoadMore]
-  );
+  useEffect(() => {
+    if (navigateTo) {
+      window.location.href = navigateTo;
+    }
+  }, [navigateTo]);
 
   useEffect(() => {
-    if (lastDeckRef.current) {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+    const observer = observerRef.current;
+    const lastDeck = lastDeckRef.current;
+
+    if (!hasMore || !lastDeck) return;
+
+    if (observer) observer.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore) {
+        onLoadMore();
       }
+    });
 
-      observerRef.current = new IntersectionObserver(handleObserver, {
-        root: null,
-        rootMargin: "20px",
-        threshold: 0.1,
-      });
-
-      observerRef.current.observe(lastDeckRef.current);
-    }
+    if (lastDeck) observerRef.current.observe(lastDeck);
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
+      if (observer) observer.disconnect();
     };
-  }, [decks.length, handleObserver]);
+  }, [hasMore, onLoadMore]);
 
   if (error) {
     return (
