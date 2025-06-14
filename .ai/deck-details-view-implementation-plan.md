@@ -1,13 +1,16 @@
 # Plan implementacji widoku Szczegóły Decka
 
 ## 1. Przegląd
+
 Widok Szczegóły Decka pozwala użytkownikowi przeglądać i zarządzać deckiem oraz jego kartami. Użytkownik może edytować i usuwać deck, przeglądać listę kart (zarówno ręcznie dodanych, jak i wygenerowanych przez AI), a także generować nowe fiszki za pomocą AI, akceptować lub odrzucać karty oraz wykonywać akcje masowe.
 
 ## 2. Routing widoku
+
 Ścieżka: `/decks/:deckId`
 Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 
 ## 3. Struktura komponentów
+
 - DeckDetailsPage
   - DeckHeader
     - EditDeckModal
@@ -24,7 +27,9 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
       - DeleteCardConfirmation
 
 ## 4. Szczegóły komponentów
+
 ### DeckHeader
+
 - Opis: Wyświetla nazwę, opis, źródło, limit kart i kategorie decku oraz przyciski edycji i usuwania.
 - Główne elementy: nagłówki, przyciski `Edit` i `Delete`.
 - Obsługiwane zdarzenia:
@@ -38,6 +43,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `onDelete(): void`
 
 ### EditDeckModal
+
 - Opis: Modal z formularzem edycji decku.
 - Główne elementy:
   - `Input` dla nazwy (max 100)
@@ -62,6 +68,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `onSave(data: EditDeckViewModel): void`
 
 ### DeleteDeckConfirmation
+
 - Opis: Modal potwierdzający usunięcie decku.
 - Główne elementy:
   - Tekst ostrzegawczy
@@ -75,6 +82,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `onCancel(): void`
 
 ### CardGenerationPanel
+
 - Opis: Panel do generowania fiszek AI.
 - Główne elementy:
   - `TextAreaWithCounter` (limit 10 000 znaków)
@@ -94,6 +102,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `deckId: string`
 
 ### CardList
+
 - Opis: Lista wszystkich kart w decku z paginacją nieskończoną.
 - Główne elementy:
   - Lista `CardItem`
@@ -108,6 +117,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `deckId: string`
 
 ### CardItem
+
 - Opis: Pojedyncza karta z pytaniem, odpowiedzią, statusem i akcjami.
 - Główne elementy:
   - Tekst pytania i odpowiedzi
@@ -122,6 +132,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `card: CardDto`
 
 ### ModalCardForm
+
 - Opis: Modal do dodawania/edycji karty.
 - Główne elementy:
   - `TextField` dla pytania (max 200)
@@ -142,6 +153,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `onSave(data: CardCreateCommand): void`
 
 ### BulkActions
+
 - Opis: Pasek akcji masowych (accept, reject, delete).
 - Główne elementy:
   - Przyciski akcji aktywowane po zaznaczeniu kart
@@ -153,11 +165,13 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
   - `selectedIds: string[]`
 
 ## 5. Typy
+
 - `EditDeckViewModel`: `{ name: string; description?: string; source?: string; card_limit?: number; category_ids?: string[] }`
 - `DeckDto`, `CardDto`, `CardCreateCommand`, `CardUpdateCommand`, `AiJobCreateCommand`, `AiJobDto` z `src/types.ts`
 - `BulkActionType`, `CardStatus` (Enums<'card_status'>)
 
 ## 6. Zarządzanie stanem
+
 - React Query:
   - `useDeckQuery(deckId)`
   - `useUpdateDeckMutation()`
@@ -169,6 +183,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 - `useToast` do komunikatów
 
 ## 7. Integracja API
+
 - `GET /api/decks/:deckId` → `DeckDto`
 - `PUT /api/decks/:deckId` body: `EditDeckViewModel` → `DeckDto`
 - `DELETE /api/decks/:deckId` → 204 → redirect
@@ -181,6 +196,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 - `GET /api/ai-jobs/:jobId` → `AiJobDetailDto`
 
 ## 8. Interakcje użytkownika
+
 - Otwieranie i zatwierdzanie edycji decku
 - Potwierdzanie usunięcia decku
 - Wprowadzanie tekstu do AI → licznik znaków, blokada
@@ -191,6 +207,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 - Edycja/Usunięcie pojedynczej karty
 
 ## 9. Warunki i walidacja
+
 - `name` decku: wymagane, max 100
 - `source`: opcjonalny, URL
 - `card_limit`: opcjonalny, >0 integer
@@ -200,6 +217,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 - AI input: ≤ 10 000
 
 ## 10. Obsługa błędów
+
 - Toasty na błędy sieci, rollback optymistyczny
 - Walidacja formularzy inline
 - 404 deck → redirect z komunikatem
@@ -207,6 +225,7 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 - Błędy paginacji → retry
 
 ## 11. Kroki implementacji
+
 1. Dodaj endpoint PUT `/api/decks/:deckId` w `[deckId].ts` (`deckService.updateDeck`).
 2. Utwórz stronę `src/pages/decks/[deckId].astro` jako kontener React.
 3. Implementuj hooki React Query (`useDeckQuery`, `useUpdateDeckMutation`, `useDeleteDeckMutation`).
@@ -217,4 +236,4 @@ Plik: `src/pages/decks/[deckId].astro` (kontejner React)
 8. Dodaj `ModalCardForm` do dodawania/edycji kart.
 9. Dodaj `BulkActions` do masowych operacji.
 10. Dodaj obsługę błędów i toasty.
-11. Przetestuj widok ręcznie i e2e. 
+11. Przetestuj widok ręcznie i e2e.

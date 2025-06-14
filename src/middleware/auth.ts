@@ -57,7 +57,14 @@ export const authMiddleware: MiddlewareHandler = async (
     return Response.redirect(new URL("/login", request.url));
   }
 
-  locals.user = user;
+  if (!user?.email) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  locals.user = {
+    id: user.id,
+    email: user.email,
+  };
   locals.accessToken = accessToken;
   locals.supabase = supabase;
 

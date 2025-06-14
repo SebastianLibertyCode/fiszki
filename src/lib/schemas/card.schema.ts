@@ -16,7 +16,7 @@ export const updateCardSchema = z.object(cardContentSchema);
 
 // Schema for updating card status
 export const updateCardStatusSchema = z.object({
-  status: z.enum(["new", "in_progress", "accepted", "rejected"]),
+  status: z.enum(cardStatusValues),
 });
 
 // Schema for query parameters

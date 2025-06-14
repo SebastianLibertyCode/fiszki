@@ -33,22 +33,21 @@ export function CardList({ deckId }: CardListProps) {
   const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(new Set());
 
   // Fetch cards with infinite scrolling
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error } =
-    useInfiniteQuery<PaginatedResponse>({
-      queryKey: ["deck", deckId, "cards"],
-      queryFn: async ({ pageParam = 1 }) => {
-        const response = await fetch(`/api/decks/${deckId}/cards?page=${pageParam}&limit=20`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch cards");
-        }
-        return response.json();
-      },
-      getNextPageParam: (lastPage: PaginatedResponse) => {
-        if (lastPage.data.length < 20) return undefined;
-        return lastPage.meta.page + 1;
-      },
-      initialPageParam: 1,
-    });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery<PaginatedResponse>({
+    queryKey: ["deck", deckId, "cards"],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await fetch(`/api/decks/${deckId}/cards?page=${pageParam}&limit=20`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch cards");
+      }
+      return response.json();
+    },
+    getNextPageParam: (lastPage: PaginatedResponse) => {
+      if (lastPage.data.length < 20) return undefined;
+      return lastPage.meta.page + 1;
+    },
+    initialPageParam: 1,
+  });
 
   // Update card status mutation
   const updateCardStatusMutation = useMutation({
@@ -100,6 +99,7 @@ export function CardList({ deckId }: CardListProps) {
       }
       setSelectedCardIds(new Set());
     } catch (error) {
+      console.error(error);
       toast.error(`Failed to ${action} cards`);
     }
   };
@@ -126,10 +126,6 @@ export function CardList({ deckId }: CardListProps) {
 
   if (isLoading) {
     return <div>Loading cards...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center text-destructive py-8">Error loading cards. Please try again later.</div>;
   }
 
   const cards = data?.pages.flatMap((page) => page.data) ?? [];

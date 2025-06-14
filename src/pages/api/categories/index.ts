@@ -4,7 +4,7 @@ import type { CategoryDto } from "@/types";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async () => {
   try {
     const supabase = createClient();
 
@@ -26,6 +26,7 @@ export const GET: APIRoute = async ({ request }) => {
       },
     });
   } catch (error) {
+    console.error(error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: {

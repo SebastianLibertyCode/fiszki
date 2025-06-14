@@ -1,16 +1,20 @@
 # Plan implementacji widoku Modal Dodawania/Edycji Karty
 
 ## 1. Przegląd
+
 Widok umożliwia ręczne tworzenie i edycję pojedynczej karty w decku. Jest otwierany jako modal na stronie szczegółów decku i zapewnia:
+
 - formularz z polami pytanie i odpowiedź,
 - walidację długości i wymagalności pól,
 - obsługę stanów ładowania i błędów,
 - dostępność (aria-modal, focus management).
 
 ## 2. Routing widoku
+
 Modal nie ma własnej ścieżki URL. Jest wywoływany i sterowany przez komponent DeckDetailPage w ramach strony `/decks/[deckId]` (plik `src/pages/decks/[deckId].astro` lub jego React wrapper).
 
 ## 3. Struktura komponentów
+
 ```
 DeckDetailPage
 ├─ Button (Dodaj kartę)
@@ -23,6 +27,7 @@ DeckDetailPage
 ## 4. Szczegóły komponentów
 
 ### DeckDetailPage
+
 - Opis: Strona wyświetlająca listę kart danego decku oraz przycisk do otwarcia modalu.
 - Główne elementy:
   - `Button` (Dodaj kartę)
@@ -34,6 +39,7 @@ DeckDetailPage
   - `deckId: string`
 
 ### CardList
+
 - Opis: Renderuje listę kart jako `CardItem`.
 - Główne elementy: `<ul>` lub `<div>` z mapą kart
 - Zdarzenia:
@@ -45,6 +51,7 @@ DeckDetailPage
   - `onDelete: (cardId: string) => void`
 
 ### CardItem
+
 - Opis: Pojedynczy element listy z treścią pytania i odpowiedzi oraz przyciskami edycji i usuwania.
 - Główne elementy:
   - Tekst pytania i odpowiedzi
@@ -59,6 +66,7 @@ DeckDetailPage
   - `onDelete: (cardId: string) => void`
 
 ### CardModal
+
 - Opis: Modal z formularzem do dodawania lub edycji karty.
 - Główne elementy:
   - `Modal` (Shadcn/ui) z `aria-modal="true"`, `initialFocus` ustawionym na pierwsze pole
@@ -77,6 +85,7 @@ DeckDetailPage
   - `initialValues?: CardFormValues`
 
 ### CardForm
+
 - Opis: Formularz zarządzający polami `question` i `answer`.
 - Główne elementy:
   - `FormField` + `Input` dla `question` (maxLength=200)
@@ -93,6 +102,7 @@ DeckDetailPage
   - `CardFormValues = { question: string; answer: string }`
 
 ## 5. Typy
+
 - `CardDto` (z `src/types.ts`)
 - `CardFormValues` (lokalny view-model)
 - `CardCreateCommand = CardFormValues`
@@ -100,6 +110,7 @@ DeckDetailPage
 - Props komponentów opisane w sekcji 4
 
 ## 6. Zarządzanie stanem
+
 - Hook `useCards(deckId: string)`:
   - Zwraca `cards: CardDto[]`, `isLoading: boolean`, `refetch(): void`
 - Mutacje:
@@ -111,12 +122,14 @@ DeckDetailPage
   - `initialValues: CardFormValues | undefined`
 
 ## 7. Integracja API
+
 - GET `/api/decks/${deckId}/cards?status=pending&page=1&limit=50`
 - POST `/api/decks/${deckId}/cards` (body: `CardCreateCommand`)
 - PUT `/api/decks/${deckId}/cards/${cardId}` (body: `CardUpdateCommand`)
 - DELETE `/api/decks/${deckId}/cards/${cardId}`
 
 ## 8. Interakcje użytkownika
+
 1. Kliknięcie "Dodaj kartę" → modal otwarty w trybie dodawania.
 2. Wypełnienie pól → aktywacja przycisku "Zapisz".
 3. Kliknięcie "Zapisz" → POST + spinner → po sukcesie zamknięcie + odświeżenie listy.
@@ -124,17 +137,20 @@ DeckDetailPage
 5. Kliknięcie "Usuń" → dialog potwierdzenia → DELETE → odświeżenie.
 
 ## 9. Warunki i walidacja
+
 - Pytanie: required, maxLength 200
 - Odpowiedź: required, maxLength 500
 - Blokada przycisku "Zapisz" przy niespełnionych warunkach
 - Dodatkowa walidacja z backendu (error 400) obsługiwana inline
 
 ## 10. Obsługa błędów
+
 - Walidacja front-end: komunikaty pod polami
 - Błędy backend: mapowanie błędów 400 na pola, 500 → globalny `Toast` "Błąd serwera, spróbuj ponownie"
 - Obsługa sieci: retry/backoff lub przycisk ponów w dialogu
 
 ## 11. Kroki implementacji
+
 1. Stworzyć hook `useCards(deckId)` do fetchowania i refetchowania kart.
 2. Zaprojektować i zaimplementować `CardList` oraz `CardItem`.
 3. Osadzić `CardList` i przycisk "Dodaj kartę" w `DeckDetailPage`.
@@ -145,4 +161,4 @@ DeckDetailPage
 8. Dodać loading i disabled stany do przycisków i pól.
 9. Dodać walidację HTML i zod, testy jednostkowe walidacji.
 10. Zaimplementować focus management i aria-modal.
-11. Przetestować scenariusze dodawania, edycji i usuwania karty. 
+11. Przetestować scenariusze dodawania, edycji i usuwania karty.

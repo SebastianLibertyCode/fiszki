@@ -9,11 +9,13 @@ Dokument opisuje architekturę front- i backendu oraz integrację z Supabase Aut
 ### 1.1 Strony i layouty
 
 1. `src/layouts/AuthLayout.astro`
+
    - Layout dedykowany stronom auth (register, login, reset-password, update-password).
    - Minimalny header, responsywny kontener formularza, footer.
    - Przy braku sesji wyświetla formularz; przy obecnej sesji przekierowuje do `/dashboard`.
 
 2. Strony Astro (w katalogu `src/pages`):
+
    - `register.astro` – formularz rejestracji.
    - `login.astro` – formularz logowania.
    - `reset-password.astro` – formularz wprowadzenia adresu e-mail do resetu.
@@ -29,6 +31,7 @@ Dokument opisuje architekturę front- i backendu oraz integrację z Supabase Aut
 ### 1.2 Komponenty React (klient)
 
 W katalogu `src/components/auth/`:
+
 - `RegisterForm.tsx` (Shadcn/ui)
 - `LoginForm.tsx`
 - `ResetPasswordForm.tsx`
@@ -36,6 +39,7 @@ W katalogu `src/components/auth/`:
 - `ResendVerificationForm.tsx`
 
 Każdy formularz odpowiada za:
+
 - Walidację (z użyciem Zod + react-hook-form).
 - Wywołanie `fetch` do odpowiedniego endpointu API.
 - Wyświetlanie komunikatów sukcesu/ błędu.
@@ -52,11 +56,11 @@ Każdy formularz odpowiada za:
 
 ### 1.4 Walidacja i komunikaty błędów
 
-| Pole              | Reguła                                    | Komunikat                                                   |
-|-------------------|-------------------------------------------|-------------------------------------------------------------|
-| Email             | required, format e-mail                   | „Adres e-mail jest wymagany” / „Nieprawidłowy format e-mail”|
-| Hasło             | required, min 8 znaków, 1 cyfra, 1 wielka  | „Hasło musi mieć min. 8 znaków, zawierać cyfrę i wielką literę”|
-| Potwierdzenie hasła| required, równość z hasłem               | „Hasła muszą być zgodne”                                    |
+| Pole                | Reguła                                    | Komunikat                                                       |
+| ------------------- | ----------------------------------------- | --------------------------------------------------------------- |
+| Email               | required, format e-mail                   | „Adres e-mail jest wymagany” / „Nieprawidłowy format e-mail”    |
+| Hasło               | required, min 8 znaków, 1 cyfra, 1 wielka | „Hasło musi mieć min. 8 znaków, zawierać cyfrę i wielką literę” |
+| Potwierdzenie hasła | required, równość z hasłem                | „Hasła muszą być zgodne”                                        |
 
 Dodatkowe: obsługa błędów z backendu (np. konflikt e-mail przy rejestracji).
 
@@ -76,17 +80,19 @@ Dodatkowe: obsługa błędów z backendu (np. konflikt e-mail przy rejestracji).
 ### 2.1 Struktura endpointów (Astro Server Functions)
 
 Katalog: `src/pages/api/auth/`
-- `register.ts` (POST)      – rejestracja użytkownika.
-- `login.ts` (POST)         – logowanie i generowanie sesji.
-- `logout.ts` (POST)        – wylogowanie (kasowanie cookie).
+
+- `register.ts` (POST) – rejestracja użytkownika.
+- `login.ts` (POST) – logowanie i generowanie sesji.
+- `logout.ts` (POST) – wylogowanie (kasowanie cookie).
 - `reset-password.ts` (POST)– inicjacja resetu (wysyłka maila).
 - `update-password.ts` (POST)– finalizacja resetu (ustawienie nowego hasła).
-- `verify-email.ts` (GET)         – weryfikacja konta na podstawie tokenu z linku.
+- `verify-email.ts` (GET) – weryfikacja konta na podstawie tokenu z linku.
 - `resend-verification.ts` (POST) – ponowne wysłanie linku weryfikacyjnego (limit 3 próby).
 
 ### 2.2 Modele i DTO
 
 W `src/types.ts`:
+
 - `AuthRegisterDTO { email: string; password: string; }`
 - `AuthLoginDTO { email: string; password: string; }`
 - `ResetPasswordDTO { email: string; }`
@@ -103,11 +109,11 @@ W `src/types.ts`:
 ### 2.4 Obsługa wyjątków i logging
 
 - Obsługa błędów z Supabase SDK (mapowanie kodów):
-  - 400 Bad Request  – nieprawidłowe dane.
+  - 400 Bad Request – nieprawidłowe dane.
   - 401 Unauthorized – błędne dane logowania lub token.
-  - 409 Conflict         – e-mail już istnieje.
+  - 409 Conflict – e-mail już istnieje.
   - 429 Too Many Requests – przekroczono limit wysyłania linków weryfikacyjnych.
-  - 500 Internal         – nieoczekiwany błąd.
+  - 500 Internal – nieoczekiwany błąd.
 - Logowanie błędów na serwerze (konsola lub zewnętrzny logger).
 - Użycie guard clauses na początku funkcji.
 
@@ -125,29 +131,24 @@ W `src/types.ts`:
 ### 3.1 Integracja z Supabase Auth
 
 Plik: `src/db/supabaseClient.ts`
+
 ```ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-export const supabaseClient = createClient(
-  import.meta.env.SUPABASE_URL,
-  import.meta.env.SUPABASE_ANON_KEY
-);
+export const supabaseClient = createClient(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_ANON_KEY);
 
-export const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const supabaseAdmin = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 ```
 
 ### 3.2 Operacje uwierzytelniania
 
-| Funkcja                           | Supabase SDK                                                  |
-|-----------------------------------|---------------------------------------------------------------|
+| Funkcja                           | Supabase SDK                                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Rejestracja                       | `supabaseClient.auth.signUp({ email, password }, { emailRedirectTo: import.meta.env.PUBLIC_APP_URL + '/verify-email' })` |
-| Logowanie                         | `supabaseClient.auth.signInWithPassword({ email, password })` |
-| Wylogowanie                       | `supabaseClient.auth.signOut()`                               |
-| Wysłanie maila resetującego hasło | `supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: import.meta.env.PUBLIC_APP_URL + '/update-password' })`            |
-| Ustawienie nowego hasła           | `supabaseAdmin.auth.updateUser({ password }, token)`          |
+| Logowanie                         | `supabaseClient.auth.signInWithPassword({ email, password })`                                                            |
+| Wylogowanie                       | `supabaseClient.auth.signOut()`                                                                                          |
+| Wysłanie maila resetującego hasło | `supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: import.meta.env.PUBLIC_APP_URL + '/update-password' })`  |
+| Ustawienie nowego hasła           | `supabaseAdmin.auth.updateUser({ password }, token)`                                                                     |
 
 ### 3.3 Bezpieczeństwo i sesje
 
@@ -158,6 +159,7 @@ export const supabaseAdmin = createClient(
 ### 3.4 Konfiguracja środowiska
 
 W `.env` / CI:
+
 ```bash
 SUPABASE_URL=...
 SUPABASE_ANON_KEY=...
@@ -166,4 +168,4 @@ SUPABASE_SERVICE_ROLE_KEY=...
 
 ---
 
-*Plik autogen. Specyfikacja gotowa do implementacji.* 
+_Plik autogen. Specyfikacja gotowa do implementacji._

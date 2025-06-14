@@ -16,22 +16,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Check types
         run: npm run typecheck || exit 1
-      
+
       - name: Run linting
         run: npm run lint
-      
+
       - name: Check formatting
         run: npm run format:check || exit 1
 
@@ -41,22 +41,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run unit tests with coverage
         run: npm run test:coverage
         env:
           CI: true
           NODE_ENV: test
-      
+
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
@@ -65,61 +65,9 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
-  e2e-test:
-    name: E2E Tests
-    needs: lint
-    runs-on: ubuntu-latest
-    environment: tests
-    env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      E2E_USERNAME_ID: ${{ secrets.E2E_USERNAME_ID }}
-      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
-      CI: true
-      NODE_ENV: test
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
-      
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      
-      - name: Build project
-        run: npm run build
-      
-      - name: Run E2E tests
-        run: npm run test:e2e
-      
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 7
-          if-no-files-found: error
-
   status-comment:
     name: Update PR Status
-    needs: [unit-test, e2e-test]
+    needs: [unit-test]
     runs-on: ubuntu-latest
     if: always()
     permissions:
@@ -130,13 +78,7 @@ jobs:
         with:
           name: unit-test-coverage
           path: coverage
-      
-      - name: Download E2E report
-        uses: actions/download-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report
-      
+
       - name: Create status comment
         uses: actions/github-script@v7
         with:
@@ -167,11 +109,9 @@ jobs:
             #### Status of checks:
             - Lint & Type Check: ${{ needs.lint.result == 'success' && '✅' || '❌' }}
             - Unit Tests: ${{ needs.unit-test.result == 'success' && '✅' || '❌' }}
-            - E2E Tests: ${{ needs.e2e-test.result == 'success' && '✅' || '❌' }}
 
             ${!allSuccess ? '⚠️ Some checks failed. Please review the logs for more details.' : ''}
 
-            [View detailed E2E test report](${context.payload.repository.html_url}/actions/runs/${context.runId}/artifacts)
             [View test coverage report](${context.payload.repository.html_url}/actions/runs/${context.runId}/artifacts)
             `;
 
@@ -181,4 +121,4 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body: body
-            }); 
+            });

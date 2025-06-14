@@ -1,7 +1,9 @@
 # Plan implementacji usługi OpenRouter
 
 ## 1. Opis usługi
+
 Usługa `OpenRouterService` to warstwa pośrednicząca między aplikacją a API OpenRouter. Udostępnia metody do wysyłania czatów opartych na LLM z precyzyjną kontrolą nad:
+
 - komunikatami systemowymi i użytkownika,
 - strukturą odpowiedzi (response_format),
 - wyborem modelu i jego parametrami.
@@ -11,6 +13,7 @@ Zaimplementowana w TypeScript, ma działać w środowisku Astro (+ React), korzy
 ---
 
 ## 2. Opis konstruktora
+
 ```ts
 interface OpenRouterConfig {
   apiKey: string;
@@ -23,6 +26,7 @@ class OpenRouterService {
   constructor(private config: OpenRouterConfig) { ... }
 }
 ```
+
 - Ładuje `apiKey` z `import.meta.env.OPENROUTER_API_KEY` lub z argumentu.
 - Ustala `baseUrl`, `defaultModel` i domyślne `params`.
 - Przygotowuje nagłówki HTTP z autoryzacją.
@@ -32,22 +36,23 @@ class OpenRouterService {
 ## 3. Publiczne metody i pola
 
 ### sendChat(
-  messages: Array<{ role: 'system' | 'user'; content: string }> ,
-  options?: {
-    model?: string;
-    params?: Record<string, any>;
-    responseFormat?: {
-      type: 'json_schema';
-      json_schema: {
-        name: string;
-        strict: boolean;
-        schema: Record<string, any>;
-      }
-    };
-  }
+
+messages: Array<{ role: 'system' | 'user'; content: string }> ,
+options?: {
+model?: string;
+params?: Record<string, any>;
+responseFormat?: {
+type: 'json_schema';
+json_schema: {
+name: string;
+strict: boolean;
+schema: Record<string, any>;
+}
+};
+}
 ): Promise<any>
 
-- Buduje payload: 
+- Buduje payload:
   ```json
   {
     model: options.model ?? this.config.defaultModel,
@@ -60,30 +65,31 @@ class OpenRouterService {
 - Zwraca zparsowaną odpowiedź.
 
 **Przykład użycia:**
+
 ```ts
-const svc = new OpenRouterService({ apiKey, defaultModel: 'gpt-4o-mini' });
+const svc = new OpenRouterService({ apiKey, defaultModel: "gpt-4o-mini" });
 
 const response = await svc.sendChat(
   [
-    { role: 'system', content: 'You are a helpful assistant.' },
-    { role: 'user',   content: 'Podaj listę 3 miast w Polsce.' }
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "Podaj listę 3 miast w Polsce." },
   ],
   {
     params: { temperature: 0.3 },
     responseFormat: {
-      type: 'json_schema',
+      type: "json_schema",
       json_schema: {
-        name: 'CityListSchema',
+        name: "CityListSchema",
         strict: true,
         schema: {
-          type: 'object',
+          type: "object",
           properties: {
-            cities: { type: 'array', items: { type: 'string' } }
+            cities: { type: "array", items: { type: "string" } },
           },
-          required: ['cities']
-        }
-      }
-    }
+          required: ["cities"],
+        },
+      },
+    },
   }
 );
 ```
@@ -129,7 +135,7 @@ const response = await svc.sendChat(
 
 ## 7. Plan wdrożenia krok po kroku
 
-1. **Instalacja zależności**  
+1. **Instalacja zależności**
    ```bash
    npm install zod
    ```
@@ -142,16 +148,21 @@ const response = await svc.sendChat(
 8. **Utwórz testy jednostkowe** (Jest/Vitest) dla:
    - poprawnej obsługi success oraz różnych błędów,
    - walidacji schematu.
-9. **Skonfiguruj środowisko**  
+9. **Skonfiguruj środowisko**
    - Dodaj `.env` z `PUBLIC_OPENROUTER_API_KEY`.
    - Upewnij się, że `import.meta.env` jest dostępne.
 10. **Zintegruj w API Astro** w `src/pages/api/chat.ts`:
     ```ts
-    import { OpenRouterService } from 'src/lib/services/OpenRouterService';
+    import { OpenRouterService } from "src/lib/services/OpenRouterService";
     export async function post({ request }) {
       const { messages } = await request.json();
-      const svc = new OpenRouterService({ apiKey: import.meta.env.PUBLIC_OPENROUTER_API_KEY, defaultModel: 'gpt-4o-mini' });
-      const result = await svc.sendChat(messages, { /* opcje */ });
+      const svc = new OpenRouterService({
+        apiKey: import.meta.env.PUBLIC_OPENROUTER_API_KEY,
+        defaultModel: "gpt-4o-mini",
+      });
+      const result = await svc.sendChat(messages, {
+        /* opcje */
+      });
       return new Response(JSON.stringify(result), { status: 200 });
     }
     ```
@@ -161,4 +172,4 @@ const response = await svc.sendChat(
 
 ---
 
-*Gotowe!* Masz szczegółowy plan implementacji usługi OpenRouter dostosowany do Astro/TS/React/Tailwind/Shadcn/ui. 
+_Gotowe!_ Masz szczegółowy plan implementacji usługi OpenRouter dostosowany do Astro/TS/React/Tailwind/Shadcn/ui.

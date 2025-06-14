@@ -1,5 +1,23 @@
 import type { Tables, Enums } from "./db/database.types";
 import type { Database } from "./db/database.types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global {
+  namespace App {
+    interface Locals {
+      user: {
+        id: string;
+        email: string;
+      };
+      accessToken: string;
+      supabase: SupabaseClient;
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
+
+export {};
 
 // Metadata for pagination responses
 export interface PaginationMetaDto {
@@ -123,4 +141,11 @@ export interface User {
   id: string;
   email: string;
   created_at: string;
+}
+
+export interface StudySession {
+  totalCards: number;
+  knownCards: number;
+  unknownCards: number;
+  duration: number;
 }

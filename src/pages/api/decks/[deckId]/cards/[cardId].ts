@@ -82,7 +82,7 @@ export const PATCH: APIRoute = async ({ params, request, locals }) => {
     }
 
     const cardService = new CardService(locals.supabase);
-    const result = await cardService.updateCardStatus(pathResult.data.deckId, pathResult.data.cardId, bodyResult.data);
+    const result = await cardService.updateCardStatus(pathResult.data.cardId, bodyResult.data.status);
 
     return new Response(JSON.stringify(result), {
       status: 200,
