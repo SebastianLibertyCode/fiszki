@@ -142,22 +142,27 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            
-            // Read coverage summary
-            const coverageSummary = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json', 'utf8'));
-            const totalCoverage = coverageSummary.total.lines.pct;
-            
+
+            // Read coverage summary if it exists
+            let totalCoverage = 'N/A';
+            try {
+              const coverageSummary = JSON.parse(fs.readFileSync('./coverage/coverage-summary.json', 'utf8'));
+              totalCoverage = coverageSummary.total.lines.pct + '%';
+            } catch (error) {
+              console.log('Coverage report not found or invalid');
+            }
+
             // Determine overall status
             const allSuccess = 
               '${{ needs.lint.result }}' === 'success' && 
               '${{ needs.unit-test.result }}' === 'success' && 
               '${{ needs.e2e-test.result }}' === 'success';
-            
+
             const icon = allSuccess ? '✅' : '❌';
-            
+
             const body = `## Pull Request Check Results ${icon}
 
-            ### Test Coverage: ${totalCoverage}%
+            ### Test Coverage: ${totalCoverage}
 
             #### Status of checks:
             - Lint & Type Check: ${{ needs.lint.result == 'success' && '✅' || '❌' }}
@@ -169,7 +174,7 @@ jobs:
             [View detailed E2E test report](${context.payload.repository.html_url}/actions/runs/${context.runId}/artifacts)
             [View test coverage report](${context.payload.repository.html_url}/actions/runs/${context.runId}/artifacts)
             `;
-            
+
             // Post comment
             await github.rest.issues.createComment({
               owner: context.repo.owner,
