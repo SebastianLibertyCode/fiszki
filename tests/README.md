@@ -75,15 +75,15 @@ npm run test:all
 ### Testy Jednostkowe
 
 ```typescript
-import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
-import { server } from '@/test/msw';
+import { describe, it, expect, beforeAll, afterEach, afterAll } from "vitest";
+import { server } from "@/test/msw";
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('Your Test Suite', () => {
-  it('should test something', () => {
+describe("Your Test Suite", () => {
+  it("should test something", () => {
     expect(true).toBe(true);
   });
 });
@@ -106,12 +106,12 @@ describe('YourComponent', () => {
 ### Testy E2E
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test('should perform user workflow', async ({ page }) => {
-  await page.goto('/');
+test("should perform user workflow", async ({ page }) => {
+  await page.goto("/");
   await page.click('[data-testid="button"]');
-  await expect(page).toHaveURL('/expected-url');
+  await expect(page).toHaveURL("/expected-url");
 });
 ```
 
@@ -140,11 +140,13 @@ Wszystkie testy są automatycznie uruchamiane w GitHub Actions przy każdym push
 ## Debugowanie
 
 ### Vitest
+
 - Użyj `npm run test:ui` dla interaktywnego debugowania
 - Dodaj `debugger` w kodzie testu
 - Sprawdź coverage report w `coverage/index.html`
 
 ### Playwright
+
 - Użyj `npm run test:e2e:debug` dla step-by-step debugging
 - Sprawdź trace viewer w raporcie
 - Skorzystaj z screenshot i video recording
@@ -152,13 +154,16 @@ Wszystkie testy są automatycznie uruchamiane w GitHub Actions przy każdym push
 ## Problemy i Rozwiązania
 
 ### Port już w użyciu
+
 Jeśli port 4321 jest zajęty, zmień go w `playwright.config.ts`
 
 ### Testy flaky
+
 - Dodaj odpowiednie `await` dla asynchronicznych operacji
 - Użyj `page.waitForSelector()` zamiast `page.click()` od razu
 - Sprawdź timeouts w konfiguracji
 
 ### MSW nie działa
+
 - Sprawdź czy `server.listen()` jest wywołane w `beforeAll`
-- Zweryfikuj endpointy w `src/test/msw.ts` 
+- Zweryfikuj endpointy w `src/test/msw.ts`

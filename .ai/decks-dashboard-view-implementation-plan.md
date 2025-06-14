@@ -1,13 +1,16 @@
 # Plan implementacji widoku Dashboard – Lista Decków
 
 ## 1. Przegląd
+
 Widok "Dashboard – Lista Decków" umożliwia użytkownikowi przeglądanie, filtrowanie oraz tworzenie nowych zestawów fiszek (decków). Głównym celem jest zapewnienie szybkiego dostępu do wszystkich decków użytkownika, prezentacja kluczowych informacji oraz wygodna nawigacja do szczegółów decku.
 
 ## 2. Routing widoku
+
 - Ścieżka: `/decks`
 - Widok dostępny po zalogowaniu.
 
 ## 3. Struktura komponentów
+
 - `Sidebar` – panel boczny z filtrami i kategoriami
 - `DeckList` – lista decków (obsługuje skeleton loading, stub pustej listy)
 - `DeckCard` – pojedyncza karta decku
@@ -15,6 +18,7 @@ Widok "Dashboard – Lista Decków" umożliwia użytkownikowi przeglądanie, fil
 - `DeckCreateModal` – modal z formularzem tworzenia decku
 
 Hierarchia:
+
 ```
 Page: DecksDashboard
 ├── Sidebar
@@ -28,7 +32,9 @@ Page: DecksDashboard
 ```
 
 ## 4. Szczegóły komponentów
+
 ### Sidebar
+
 - **Opis:** Panel boczny z filtrami (kategorie, reset filtrów).
 - **Główne elementy:** Lista kategorii (checkboxy lub tagi), przycisk reset.
 - **Obsługiwane interakcje:** Wybór kategorii, reset filtrów.
@@ -41,6 +47,7 @@ Page: DecksDashboard
   - `onReset: () => void`
 
 ### DeckList
+
 - **Opis:** Wyświetla listę decków, obsługuje loading i pustą listę.
 - **Główne elementy:** Lista `DeckCard`, skeleton loader, stub pustej listy.
 - **Obsługiwane interakcje:** Scrollowanie, kliknięcie decku.
@@ -53,6 +60,7 @@ Page: DecksDashboard
   - `onDeckClick: (id: string) => void`
 
 ### DeckCard
+
 - **Opis:** Prezentuje pojedynczy deck (nazwa, data, źródło, liczba kart).
 - **Główne elementy:** Nazwa, data utworzenia, źródło (link), liczba kart.
 - **Obsługiwane interakcje:** Kliknięcie (przejście do widoku decku).
@@ -63,6 +71,7 @@ Page: DecksDashboard
   - `onClick: (id: string) => void`
 
 ### InfiniteScroll
+
 - **Opis:** Obsługuje ładowanie kolejnych stron przy scrollu.
 - **Główne elementy:** Obserwator scrolla, loader.
 - **Obsługiwane interakcje:** Scroll do końca listy.
@@ -74,6 +83,7 @@ Page: DecksDashboard
   - `onLoadMore: () => void`
 
 ### DeckCreateModal
+
 - **Opis:** Modal z formularzem tworzenia decku.
 - **Główne elementy:** Pola: nazwa, opis, źródło, limit kart, kategorie; przyciski submit/cancel.
 - **Obsługiwane interakcje:** Wpisywanie danych, submit, zamknięcie modala.
@@ -91,6 +101,7 @@ Page: DecksDashboard
   - `error?: string`
 
 ## 5. Typy
+
 - `DeckSummaryDto`: { id, name, description, source_url, card_limit, created_at, updated_at }
 - `PaginatedDto<DeckSummaryDto>`: { data: DeckSummaryDto[], meta: { page, total } }
 - `CategoryDto`: { id, name }
@@ -100,6 +111,7 @@ Page: DecksDashboard
 - `FormErrors`: { [field: string]: string }
 
 ## 6. Zarządzanie stanem
+
 - Globalny stan widoku zarządzany w komponencie strony (`DecksDashboard`).
 - Hooki customowe:
   - `useDecksList` – fetchuje decki, obsługuje paginację, loading, error, filtry.
@@ -109,6 +121,7 @@ Page: DecksDashboard
 - Stan lokalny: loading, error, decks, page, hasMore, filters, modal open/close.
 
 ## 7. Integracja API
+
 - **GET /api/decks** – pobranie listy decków (parametry: page, limit, sort, kategorie).
   - Odpowiedź: `PaginatedDto<DeckSummaryDto>`
 - **POST /api/decks** – utworzenie nowego decku.
@@ -117,6 +130,7 @@ Page: DecksDashboard
 - **GET /api/categories** – pobranie kategorii (jeśli endpoint istnieje).
 
 ## 8. Interakcje użytkownika
+
 - Scrollowanie listy → ładowanie kolejnych decków (infinite scroll).
 - Kliknięcie decku → przejście do widoku decku.
 - Wybór kategorii/filtrów → odświeżenie listy decków.
@@ -125,6 +139,7 @@ Page: DecksDashboard
 - Błąd ładowania → komunikat błędu, opcja retry.
 
 ## 9. Warunki i walidacja
+
 - Nazwa: wymagane, max 100 znaków.
 - Źródło: wymagane, poprawny URL.
 - Limit kart: opcjonalny, liczba > 0.
@@ -133,6 +148,7 @@ Page: DecksDashboard
 - Komunikaty błędów wyświetlane przy polach i globalnie.
 
 ## 10. Obsługa błędów
+
 - Błąd sieci/API → komunikat, opcja ponów.
 - Niepoprawne dane w formularzu → walidacja inline, blokada submit.
 - Pusta lista decków → stub z informacją.
@@ -140,6 +156,7 @@ Page: DecksDashboard
 - Brak kolejnych stron → wyłączenie infinite scroll.
 
 ## 11. Kroki implementacji
+
 1. Stwórz strukturę folderów i plików dla widoku `/decks` oraz komponentów (`Sidebar`, `DeckList`, `DeckCard`, `InfiniteScroll`, `DeckCreateModal`).
 2. Zaimplementuj typy i interfejsy DTO/ViewModel w `types.ts` lub lokalnie.
 3. Zaimplementuj hooki: `useDecksList`, `useCategories`, `useInfiniteScroll`, `useDeckCreateForm`.
@@ -150,4 +167,4 @@ Page: DecksDashboard
 8. Zaimplementuj modal `DeckCreateModal` z formularzem, walidacją i obsługą submit.
 9. Zintegruj wszystkie komponenty w widoku `DecksDashboard`.
 10. Przetestuj interakcje, walidację, obsługę błędów i dostępność (aria-live, focus management).
-11. Zaimplementuj testy jednostkowe i e2e dla kluczowych ścieżek. 
+11. Zaimplementuj testy jednostkowe i e2e dla kluczowych ścieżek.

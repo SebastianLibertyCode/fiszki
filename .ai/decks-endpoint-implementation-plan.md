@@ -1,6 +1,7 @@
 # API Endpoint Implementation Plan: /api/decks
 
 ## 1. Przegląd punktu końcowego
+
 Endpoint `/api/decks` realizuje dwie operacje:
 
 - **GET**: pobiera listę talii użytkownika z paginacją i sortowaniem.
@@ -11,9 +12,10 @@ Celem jest zapewnienie spójnej obsługi obu metod, zgodnie z REST, z walidacją
 ## 2. Szczegóły żądania
 
 ### 2.1 GET /api/decks
+
 - Metoda HTTP: GET
-- URL: `/api/decks`  
-- Nagłówek:  `Authorization: Bearer <token>`
+- URL: `/api/decks`
+- Nagłówek: `Authorization: Bearer <token>`
 - Query Parameters:
   - `page` (liczba, opcjonalne, domyślnie 1)
   - `limit` (liczba, opcjonalne, domyślnie 20, max 100)
@@ -21,9 +23,10 @@ Celem jest zapewnienie spójnej obsługi obu metod, zgodnie z REST, z walidacją
 - Request Body: brak
 
 ### 2.2 POST /api/decks
+
 - Metoda HTTP: POST
-- URL: `/api/decks`  
-- Nagłówek:  `Authorization: Bearer <token>`
+- URL: `/api/decks`
+- Nagłówek: `Authorization: Bearer <token>`
 - Request Body (JSON): zgodnie z typem `DeckCreateCommand`
   ```json
   {
@@ -36,18 +39,21 @@ Celem jest zapewnienie spójnej obsługi obu metod, zgodnie z REST, z walidacją
   ```
 
 ### 2.3 GET /api/decks/:deckId
+
 - Metoda HTTP: GET
 - URL: `/api/decks/:deckId`
-- Nagłówek:  `Authorization: Bearer <token>`
+- Nagłówek: `Authorization: Bearer <token>`
 - Request Body: brak
 
 ### 2.4 DELETE /api/decks/:deckId
+
 - Metoda HTTP: DELETE
 - URL: `/api/decks/:deckId`
-- Nagłówek:  `Authorization: Bearer <token>`
+- Nagłówek: `Authorization: Bearer <token>`
 - Request Body: brak
 
 ## 3. Wykorzystywane typy
+
 - `DeckSummaryDto` (podstawowe pola talii)
 - `DeckDto` (pełna talia z tablicą `categories`)
 - `DeckCreateCommand` (polecenie tworzenia talii)
@@ -56,6 +62,7 @@ Celem jest zapewnienie spójnej obsługi obu metod, zgodnie z REST, z walidacją
 ## 4. Szczegóły odpowiedzi
 
 ### 4.1 GET /api/decks
+
 - Status: `200 OK`
 - Body:
   ```json
@@ -66,14 +73,17 @@ Celem jest zapewnienie spójnej obsługi obu metod, zgodnie z REST, z walidacją
   ```
 
 ### 4.2 POST /api/decks
+
 - Status: `201 Created`
 - Body: obiekt `DeckDto` (nowo utworzona talia z kategoriami)
 
 ### 4.3 GET /api/decks/:deckId
+
 - Status: `200 OK`
 - Body: obiekt `DeckDto`
 
 ### 4.4 DELETE /api/decks/:deckId
+
 - Status: `204 No Content`
 
 ## 5. Przepływ danych
@@ -135,4 +145,4 @@ Celem jest zapewnienie spójnej obsługi obu metod, zgodnie z REST, z walidacją
     - `DELETE`: walidacja, autoryzacja, `deckService.deleteDeck`, zwrócenie `204 No Content`.
 11. Dodać testy jednostkowe i integracyjne dla nowych metod i endpointów.
 12. Zaktualizować dokumentację (OpenAPI / API Plan) – dodać GET i DELETE /api/decks/:deckId.
-13. Przegląd kodu i merge. 
+13. Przegląd kodu i merge.

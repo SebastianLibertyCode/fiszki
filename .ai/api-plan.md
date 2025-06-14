@@ -16,6 +16,7 @@
 ### 2.2 Deck Management
 
 #### GET /api/decks
+
 - Description: List user's decks (paginated).
 - Query Parameters: `?page=1&limit=20&sort=created_at:desc`
 - Response 200:
@@ -24,6 +25,7 @@
   ```
 
 #### POST /api/decks
+
 - Description: Create a new deck.
 - Request Body:
   ```json
@@ -33,25 +35,30 @@
 - Validation: name ≤100 chars, source_url valid URL, card_limit>0.
 
 #### GET /api/decks/:deckId
+
 - Description: Get a single deck.
 - Response 200: Deck with categories array.
 
 #### PUT /api/decks/:deckId
+
 - Description: Update deck properties.
 - Request Body: same as create.
 - Response 200: Updated deck.
 
 #### DELETE /api/decks/:deckId
+
 - Description: Delete a deck and its cards.
 - Response 204: No content.
 
 ### 2.3 Category Management
 
 #### GET /api/categories
+
 - Description: List all categories.
 - Response 200: Array of categories.
 
 #### POST /api/decks/:deckId/categories
+
 - Description: Attach categories to a deck.
 - Request Body:
   ```json
@@ -60,17 +67,20 @@
 - Response 200: Updated deck categories.
 
 #### DELETE /api/decks/:deckId/categories/:categoryId
+
 - Description: Remove category from deck.
 - Response 204: No content.
 
 ### 2.4 Card Management
 
 #### GET /api/decks/:deckId/cards
+
 - Description: List cards for a deck (paginated, filter by status).
 - Query: `?status=pending&page=1&limit=50`
 - Response 200: Paginated list.
 
 #### POST /api/decks/:deckId/cards
+
 - Description: Manually add a card.
 - Request Body:
   ```json
@@ -80,15 +90,18 @@
 - Validation: question ≤200 chars, answer ≤500 chars.
 
 #### PUT /api/decks/:deckId/cards/:cardId
+
 - Description: Update a card's Q/A.
 - Request Body: same fields.
 - Response 200: Updated card.
 
 #### DELETE /api/decks/:deckId/cards/:cardId
+
 - Description: Delete a card.
 - Response 204.
 
 #### PATCH /api/decks/:deckId/cards/:cardId/status
+
 - Description: Accept or reject a card.
 - Request Body:
   ```json
@@ -97,18 +110,18 @@
 - Response 200: Updated card with new status and timestamps.
 
 #### GET /api/decks/:deckId/cards/study
+
 - Description: Retrieve all cards ready for study from a deck (accepted status).
 - Response 200:
   ```json
-  [
-    { "id": "uuid", "question": "string", "answer": "string" }
-  ]
+  [{ "id": "uuid", "question": "string", "answer": "string" }]
   ```
 - Notes: Returns full list of cards without pagination for sequential, full-screen study.
 
 ### 2.5 AI Job Management
 
 #### POST /api/decks/:deckId/ai-jobs
+
 - Description: Start AI generation job.
 - Request Body:
   ```json
@@ -121,9 +134,11 @@
 - Logic: enqueue job, enforce token quota, abort after 20s.
 
 #### GET /api/decks/:deckId/ai-jobs
+
 - Description: List jobs for a deck (paginated).
 
 #### GET /api/decks/:deckId/ai-jobs/:jobId
+
 - Description: Get job status and results (cards).
 - Response 200:
   ```json
@@ -131,12 +146,14 @@
   ```
 
 #### POST /api/decks/:deckId/ai-jobs/:jobId/retry
+
 - Description: Retry a failed or timed-out job.
 - Response 202: New job status updated.
 
 ### 2.6 AI Metrics
 
 #### GET /api/decks/:deckId/ai-jobs/:jobId/metrics
+
 - Description: Retrieve latency and outcome.
 - Response 200:
   ```json
@@ -146,6 +163,7 @@
 ### 2.7 Token Usage
 
 #### GET /api/token-usage
+
 - Description: Get daily token usage for user.
 - Query: `?date=YYYY-MM-DD`
 - Response 200: Usage record.
@@ -172,7 +190,8 @@
 
 ---
 
-*Assumptions:*
+_Assumptions:_
+
 - Rate limiting and retry logic implemented via middleware and background workers.
 - Categories are global, created via admin or separate endpoint not in MVP.
-- Frontend will handle progress bar and UI feedback per PRD. 
+- Frontend will handle progress bar and UI feedback per PRD.
